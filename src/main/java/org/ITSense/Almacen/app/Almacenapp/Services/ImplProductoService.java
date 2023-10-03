@@ -13,25 +13,24 @@ import java.util.Optional;
 @Service
 public class ImplProductoService implements ProductoService{
 
-    @Autowired
-    private ProductoRepository productoRepository;
+    @Autowired private ProductoRepository productoRepository;
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Producto> listarTodosLosProductos() {
         return (List<Producto>) productoRepository.findAll();
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Producto> listarProductosPorEstado(String estado) {
         return productoRepository.findByEstado(estado);
     }
 
-    @Override
-    @Transactional
-    public Optional<Producto> obtenerProductoPorId(Long id) {
-        return productoRepository.findById(id);
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public Optional<Producto> obtenerProductoPorId(Long id) {
+//        return productoRepository.findById(id);
+//    }
 
     @Override
     @Transactional

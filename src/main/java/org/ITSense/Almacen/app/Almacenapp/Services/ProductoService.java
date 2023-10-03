@@ -14,7 +14,7 @@ public interface ProductoService {
 
     List<Producto> listarTodosLosProductos();
     List<Producto> listarProductosPorEstado(String estado);
-    Optional<Producto> obtenerProductoPorId(Long id);
+//    Optional<Producto> obtenerProductoPorId(Long id);
     Producto registrarProducto(Producto producto);
     Producto actualizarProducto(Producto producto);
     void marcarProductoComoNoDisponible(Long id);
