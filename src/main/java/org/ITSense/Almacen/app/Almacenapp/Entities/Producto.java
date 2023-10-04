@@ -2,13 +2,17 @@ package org.ITSense.Almacen.app.Almacenapp.Entities;
 
 import jakarta.persistence.*;
 import org.ITSense.Almacen.app.Almacenapp.Enums.EstadoProducto;
+import org.ITSense.Almacen.app.Almacenapp.Enums.TipoProducto;
+import org.antlr.v4.runtime.misc.NotNull;
+
+import java.util.Date;
 
 @Entity
-@Table(name="productos")
+@Table(name = "productos")
 public class Producto {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
 
@@ -16,8 +20,11 @@ public class Producto {
     private EstadoProducto estado;
 
     @Enumerated(EnumType.STRING)
-    private EstadoProducto tipo;
+    private TipoProducto tipo;
 
+    @NotNull
+    private Date fechaIngreso;
+    private Date fechaRetiro;
     public Long getId() {
         return id;
     }
@@ -42,11 +49,27 @@ public class Producto {
         this.estado = estado;
     }
 
-    public EstadoProducto getTipo() {
+    public TipoProducto getTipo() {
         return tipo;
     }
 
-    public void setTipo(EstadoProducto tipo) {
+    public void setTipo(TipoProducto tipo) {
         this.tipo = tipo;
+    }
+
+    public Date getFechaIngreso() {
+        return fechaIngreso;
+    }
+
+    public void setFechaIngreso(Date fechaIngreso) {
+        this.fechaIngreso = fechaIngreso;
+    }
+
+    public Date getFechaRetiro() {
+        return fechaRetiro;
+    }
+
+    public void setFechaRetiro(Date fechaRetiro) {
+        this.fechaRetiro = fechaRetiro;
     }
 }

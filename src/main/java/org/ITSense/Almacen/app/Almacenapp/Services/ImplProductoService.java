@@ -5,82 +5,77 @@ import org.ITSense.Almacen.app.Almacenapp.Enums.EstadoProducto;
 import org.ITSense.Almacen.app.Almacenapp.Repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
-public class ImplProductoService implements ProductoService{
+public class ImplProductoService implements ProductoService {
 
-    @Autowired private ProductoRepository productoRepository;
-    @Override
-    @Transactional(readOnly = true)
-    public List<Producto> listarTodosLosProductos() {
-        return (List<Producto>) productoRepository.findAll();
+    private final ProductoRepository productoRepository;
+    //Inyecion de dependencias por constructor
+    @Autowired
+    public ImplProductoService(ProductoRepository productoRepository) {
+        this.productoRepository = productoRepository;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Producto> listarProductosPorEstado(String estado) {
-        return productoRepository.findByEstado(estado);
-    }
-
-//    @Override
-//    @Transactional(readOnly = true)
-//    public Optional<Producto> obtenerProductoPorId(Long id) {
-//        return productoRepository.findById(id);
-//    }
-
-    @Override
-    @Transactional
-    public Producto registrarProducto(Producto producto) {
-        return productoRepository.save(producto);
+    public List<Producto> obtenerProductosPorEstado(String estado) {
+        return switch (estado) {
+            case "DISPONIBLE" -> productoRepository.findByEstado(EstadoProducto.DISPONIBLE);
+            case "DISPONIBLE_DEFECTUOSO" -> productoRepository.findByEstado(EstadoProducto.DISPONIBLE_DEFECTUOSO);
+            default ->
+                // Si el estado no coincide con ninguno de los casos anteriores, devuelve todos los productos.
+             productoRepository.findByEstadoNot(EstadoProducto.NO_DISPONIBLE);
+        };
     }
 
     @Override
-    @Transactional
-    public Producto actualizarProducto(Producto producto) {
-        // Verifica si el producto ya existe
-        if (producto.getId() == null || !productoRepository.existsById(producto.getId())) {
-            throw new RuntimeException("El producto no existe.");
+    public List<Producto> ingresarProductos(List<Producto> productos, Date fechaIngreso) {
+        if (fechaIngreso == null || fechaIngreso.after(new Date())) {
+            Date fechaActual = new Date();
+            productos.forEach(producto -> producto.setFechaIngreso(fechaActual));
+        }else{
+            productos.forEach(producto -> producto.setFechaIngreso(fechaIngreso));
         }
-
-        return productoRepository.save(producto);
+        return (List<Producto>) productoRepository.saveAll(productos);
     }
 
     @Override
-    @Transactional
-    public void marcarProductoComoNoDisponible(Long id) {
+    public boolean marcarProductoComoDefectuoso(Long id) {
         Optional<Producto> productoOptional = productoRepository.findById(id);
         if (productoOptional.isPresent()) {
             Producto producto = productoOptional.get();
-            if (EstadoProducto.NO_DISPONIBLE.equals(EstadoProducto.valueOf("NO_DISPONIBLE"))) {
-                producto.setEstado(EstadoProducto.NO_DISPONIBLE);
-                productoRepository.save(producto);
-            } else {
-                throw new RuntimeException("Valor de estado no válido.");
-            }
-        } else {
-            throw new RuntimeException("Producto no encontrado.");
+            producto.setEstado(EstadoProducto.DISPONIBLE_DEFECTUOSO);
+            productoRepository.save(producto);
+            return true;
         }
+        return false;
     }
 
+
     @Override
-    @Transactional
-    public void marcarProductoComoDefectuoso(Long id) {
+    public boolean retirarProducto(Long id, Date fechaRetiro) {
         Optional<Producto> productoOptional = productoRepository.findById(id);
         if (productoOptional.isPresent()) {
             Producto producto = productoOptional.get();
-            if (EstadoProducto.DISPONIBLE_DEFECTUOSO.equals(EstadoProducto.valueOf("DISPONIBLE_DEFECTUOSO"))) {
-                producto.setEstado(EstadoProducto.DISPONIBLE_DEFECTUOSO);
-                productoRepository.save(producto);
-            } else {
-                throw new RuntimeException("Valor de estado no válido.");
+            producto.setEstado(EstadoProducto.NO_DISPONIBLE);
+
+            if (fechaRetiro == null || fechaRetiro.after(new Date())) {
+                Date fechaActual = new Date();
+                producto.setFechaRetiro(fechaActual);
+            }else{
+                producto.setFechaRetiro(fechaRetiro);
             }
-        } else {
-            throw new RuntimeException("Producto no encontrado.");
+            productoRepository.save(producto);
+            return true;
         }
+        return false;
     }
 
+    @Override
+    public List<Producto> obtenerProductosNoDisponibles() {
+        return productoRepository.findByEstado(EstadoProducto.NO_DISPONIBLE);
+
+    }
 }
+
