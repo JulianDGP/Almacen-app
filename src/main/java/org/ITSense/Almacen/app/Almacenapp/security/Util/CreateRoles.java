@@ -1,0 +1,23 @@
+//package org.ITSense.Almacen.app.Almacenapp.security.Util;//package ITSense.PruebTecnica.Bodega.Security.Util;
+//
+//
+//import org.ITSense.Almacen.app.Almacenapp.security.Entities.Rol;
+//import org.ITSense.Almacen.app.Almacenapp.security.Enums.RolNombre;
+//import org.ITSense.Almacen.app.Almacenapp.security.Services.RolService;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.CommandLineRunner;
+//import org.springframework.stereotype.Component;
+//
+//@Component
+//public class CreateRoles implements CommandLineRunner {
+//
+//    @Autowired RolService rolService;
+//
+//    @Override
+//    public void run(String... args) throws Exception {
+//        Rol rolAdmin = new Rol(RolNombre.ROLE_ADMIN);
+//        Rol rolUser = new Rol(RolNombre.ROLE_USER);
+//        rolService.save(rolAdmin);
+//        rolService.save(rolUser);
+//    }
+//}
