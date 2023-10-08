@@ -33,7 +33,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
-
     //Obtenemos el token sin Bearer + el espacio
 
     @Override
