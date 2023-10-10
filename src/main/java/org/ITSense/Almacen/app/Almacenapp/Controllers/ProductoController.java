@@ -1,6 +1,5 @@
 package org.ITSense.Almacen.app.Almacenapp.Controllers;
 
-import io.swagger.annotations.ApiOperation;
 import org.ITSense.Almacen.app.Almacenapp.Entities.Producto;
 import org.ITSense.Almacen.app.Almacenapp.Services.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
