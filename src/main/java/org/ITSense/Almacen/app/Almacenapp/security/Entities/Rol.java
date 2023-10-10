@@ -1,10 +1,10 @@
 package org.ITSense.Almacen.app.Almacenapp.security.Entities;
 
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.ITSense.Almacen.app.Almacenapp.security.Enums.RolNombre;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class Rol {

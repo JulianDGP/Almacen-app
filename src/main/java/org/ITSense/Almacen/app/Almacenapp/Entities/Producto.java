@@ -1,10 +1,10 @@
 package org.ITSense.Almacen.app.Almacenapp.Entities;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.ITSense.Almacen.app.Almacenapp.Enums.EstadoProducto;
 import org.ITSense.Almacen.app.Almacenapp.Enums.TipoProducto;
-import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.*;
 import java.util.Date;
 
 @Entity

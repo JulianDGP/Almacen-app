@@ -1,5 +1,6 @@
 package org.ITSense.Almacen.app.Almacenapp.security.Controller;
 
+import jakarta.validation.Valid;
 import org.ITSense.Almacen.app.Almacenapp.Dto.Mensaje;
 import org.ITSense.Almacen.app.Almacenapp.security.Dto.JwtDto;
 import org.ITSense.Almacen.app.Almacenapp.security.Dto.LoginUsuario;
@@ -21,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Set;
 

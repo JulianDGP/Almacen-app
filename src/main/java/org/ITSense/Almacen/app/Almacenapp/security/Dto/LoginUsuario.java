@@ -1,6 +1,7 @@
 package org.ITSense.Almacen.app.Almacenapp.security.Dto;
 
-import javax.validation.constraints.NotBlank;
+
+import jakarta.validation.constraints.NotBlank;
 
 public class LoginUsuario {
     @NotBlank

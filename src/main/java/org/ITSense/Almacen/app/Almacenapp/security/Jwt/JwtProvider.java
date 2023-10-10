@@ -1,20 +1,27 @@
 package org.ITSense.Almacen.app.Almacenapp.security.Jwt;
 
+
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.ITSense.Almacen.app.Almacenapp.security.Entities.UsuarioPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Clase que genera el token y valida que este bien formado y no este expirado
  */
 @Component
 public class JwtProvider {
-    // Implementamos un logger para ver cual metodo da error en caso de falla
     private final static Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
     @Value("${jwt.secret}")
@@ -23,36 +30,44 @@ public class JwtProvider {
     @Value("${jwt.expiration}")
     private int expiration;
 
-    public String generateToken(Authentication authentication){
+    public String generateToken(Authentication authentication) {
         UsuarioPrincipal usuarioPrincipal = (UsuarioPrincipal) authentication.getPrincipal();
-
-        return Jwts.builder().setSubject(usuarioPrincipal.getUsername())
+        List<String> roles = usuarioPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        return Jwts.builder()
+                .setSubject(usuarioPrincipal.getUsername())
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + expiration*1000))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
+                .setExpiration(new Date(new Date().getTime() + expiration * 1000))
+                .signWith(getSecret(secret))
+                .compact();
     }
 
-    public String getNombreUsuarioFromToken(String token){
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+    public String getNombreUsuarioFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(getSecret(secret)).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     public boolean validateToken(String token) {
-
         try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(getSecret(secret)).build().parseClaimsJws(token);
             return true;
-        }catch (MalformedJwtException e){
-            logger.error("Token mal formado");
-        }catch (UnsupportedJwtException e){
-            logger.error("Token no soportado");
-        }catch (ExpiredJwtException e){
-            logger.error("Token expirado");
-        }catch (IllegalArgumentException e){
-            logger.error("Token vacio");
-        }catch (SignatureException e){
-            logger.error("Fallo con la firma");
+        } catch (MalformedJwtException e) {
+            logger.error("token mal formado");
+        } catch (UnsupportedJwtException e) {
+            logger.error("token no soportado");
+        } catch (ExpiredJwtException e) {
+            logger.error("token expirado");
+        } catch (IllegalArgumentException e) {
+            logger.error("token vacío");
+        } catch (SignatureException e) {
+            logger.error("fail en la firma");
         }
         return false;
+    }
+
+
+    private Key getSecret(String secret){
+        byte[] secretBytes = Decoders.BASE64URL.decode(secret);
+        return Keys.hmacShaKeyFor(secretBytes);
     }
 
 
